@@ -1060,13 +1060,17 @@ if(VPX_ARCH_X86 OR VPX_ARCH_X86_64)
       vp8/common/x86/vp8_asm_stubs.c
       vp8/common/x86/loopfilter_x86.c
     )
+    if(HAVE_MMX OR HAVE_SSE2 OR HAVE_SSSE3)
+      vpx_add_simd_source(VP8_COMMON_SRCS MMX
+        vp8/common/x86/subpixel_mmx.asm
+      )
+    endif()
     if(HAVE_MMX)
       vpx_add_simd_source(VP8_COMMON_SRCS MMX
         vp8/common/x86/dequantize_mmx.asm
         vp8/common/x86/idct_blk_mmx.c
         vp8/common/x86/idctllm_mmx.asm
         vp8/common/x86/recon_mmx.asm
-        vp8/common/x86/subpixel_mmx.asm
       )
     endif()
     if(HAVE_SSE2)
