@@ -16,6 +16,7 @@
 /* Interface header for common constant data structures and lookup tables */
 
 #include "vpx_mem/vpx_mem.h"
+#include "vpx_ports/static_assert.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +26,7 @@ extern "C" {
 
 #define vp8_copy(Dest, Src)                         \
   do {                                              \
-    static_assert(sizeof(Dest) == sizeof(Src), ""); \
+    VPX_STATIC_ASSERT(sizeof(Dest) == sizeof(Src)); \
     memcpy(Dest, Src, sizeof(Src));                 \
   } while (0)
 
@@ -33,7 +34,7 @@ extern "C" {
 
 #define vp8_copy_array(Dest, Src, N)                      \
   do {                                                    \
-    static_assert(sizeof(*(Dest)) == sizeof(*(Src)), ""); \
+    VPX_STATIC_ASSERT(sizeof(*(Dest)) == sizeof(*(Src))); \
     memcpy(Dest, Src, (N) * sizeof(*(Src)));              \
   } while (0)
 

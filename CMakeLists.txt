@@ -423,7 +423,7 @@ foreach(rtcd_ext
 endforeach()
 
 find_package(Perl)
-if(NOT PERL_FOUND AND WIN32)
+if(NOT PERL_FOUND AND CMAKE_HOST_WIN32)
   # Try to find Perl in common Git locations on Windows if not in PATH
   unset(PERL_EXECUTABLE CACHE)
   find_program(PERL_EXECUTABLE NAMES perl
