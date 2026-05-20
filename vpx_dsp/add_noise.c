@@ -15,6 +15,7 @@
 #include "./vpx_dsp_rtcd.h"
 
 #include "vpx/vpx_integer.h"
+#include "vpx_dsp/vpx_dsp_common.h"
 #include "vpx_dsp/postproc.h"
 #include "vpx_ports/mem.h"
 

@@ -69,3 +69,5 @@
 /vpxenc
 /vpxenc.dox
 TAGS
+
+cmake-build-**

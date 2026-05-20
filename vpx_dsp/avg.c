@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include "./vpx_dsp_rtcd.h"
+#include "vpx_dsp/vpx_dsp_common.h"
 #include "vpx_ports/mem.h"
 
 unsigned int vpx_avg_8x8_c(const uint8_t *s, int p) {

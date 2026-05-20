@@ -1,0 +1,14 @@
+# pkg-config file from libvpx @PROJECT_VERSION@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: vpx
+Description: WebM Project VPx codec implementation
+Version: @PROJECT_VERSION@
+Requires:
+Conflicts:
+Libs: -L${libdir} -lvpx -lm
+Libs.private: -lm
+Cflags: -I${includedir}

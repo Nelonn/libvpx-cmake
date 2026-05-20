@@ -66,4 +66,10 @@
 #define VPX_UNINITIALIZED
 #endif  // __has_attribute(uninitialized)
 
+#if defined(_MSC_VER)
+#define INLINE __inline
+#else
+#define INLINE inline
+#endif
+
 #endif  // VPX_VPX_PORTS_COMPILER_ATTRIBUTES_H_
