@@ -1751,6 +1751,21 @@ set_target_properties(vpx PROPERTIES
 set(LIBVPX_TARGET vpx)
 
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+set(VPX_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/vpx")
+
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/vpxConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/vpxConfig.cmake"
+  INSTALL_DESTINATION "${VPX_CONFIG_INSTALL_DIR}"
+)
+
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/vpxConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
 
 # Install libraries
 install(TARGETS vpx
@@ -1763,7 +1778,13 @@ install(TARGETS vpx
 # Export targets
 install(EXPORT vpxTargets
   NAMESPACE vpx::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vpx
+  DESTINATION ${VPX_CONFIG_INSTALL_DIR}
+)
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/vpxConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/vpxConfigVersion.cmake"
+  DESTINATION ${VPX_CONFIG_INSTALL_DIR}
 )
 
 # Install public headers
@@ -1773,7 +1794,7 @@ foreach(hdr ${LIBVPX_INCLUDES})
   get_filename_component(hdr_dir ${rel_path} DIRECTORY)
 
   install(FILES ${hdr}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vpx/${hdr_dir}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${hdr_dir}
   )
 endforeach()
 
