@@ -1658,6 +1658,14 @@ if(CONFIG_VP9)
   list(APPEND LIBVPX_INCLUDES ${VP9_INCLUDES})
 endif()
 
+set(LIBVPX_EXISTING_INCLUDES "")
+foreach(hdr ${LIBVPX_INCLUDES})
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${hdr}")
+    list(APPEND LIBVPX_EXISTING_INCLUDES ${hdr})
+  endif()
+endforeach()
+set(LIBVPX_INCLUDES ${LIBVPX_EXISTING_INCLUDES})
+
 # Add generated RTCD headers to sources for dependency tracking
 list(APPEND LIBVPX_SRCS ${RTCD_TARGETS})
 
