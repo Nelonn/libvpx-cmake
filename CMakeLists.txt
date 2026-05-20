@@ -24,22 +24,25 @@ option(CONFIG_ASM_NASM "Enable NASM x86 assembly optimizations" ON)
 option(CONFIG_RUNTIME_CPU_DETECT "Enable runtime CPU detection" ON)
 option(CONFIG_REALTIME_ONLY "Enable realtime only" OFF)
 option(CONFIG_ONTHEFLY_BITPACKING "Enable on-the-fly bitpacking" OFF)
+option(CONFIG_EXAMPLES "Build example executables" OFF)
 
-# ============================================================================
-# Architecture detection
-# ============================================================================
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|amd64")
-  set(VPX_ARCH_X86_64 ON)
-  set(VPX_ARCH_X86 OFF)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i[3-6]86|x86")
-  set(VPX_ARCH_X86 ON)
-  set(VPX_ARCH_X86_64 OFF)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
+set(VPX_ARCH_X86 OFF)
+set(VPX_ARCH_X86_64 OFF)
+set(VPX_ARCH_ARM OFF)
+set(VPX_ARCH_AARCH64 OFF)
+
+set(VPX_TARGET_PROCESSOR
+  "${CMAKE_SYSTEM_PROCESSOR};${CMAKE_VS_PLATFORM_NAME};${CMAKE_GENERATOR_PLATFORM};${CMAKE_C_COMPILER_ARCHITECTURE_ID}"
+)
+
+if(VPX_TARGET_PROCESSOR MATCHES "aarch64|arm64|ARM64|ARM64EC")
   set(VPX_ARCH_AARCH64 ON)
-  set(VPX_ARCH_ARM OFF)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|ARM")
+elseif(VPX_TARGET_PROCESSOR MATCHES "x86_64|AMD64|amd64|x64|X64")
+  set(VPX_ARCH_X86_64 ON)
+elseif(VPX_TARGET_PROCESSOR MATCHES "i[3-6]86|x86")
+  set(VPX_ARCH_X86 ON)
+elseif(VPX_TARGET_PROCESSOR MATCHES "arm|ARM")
   set(VPX_ARCH_ARM ON)
-  set(VPX_ARCH_AARCH64 OFF)
 endif()
 
 # Enable only the assembler language needed by the active architecture. NASM is
@@ -166,6 +169,11 @@ if(CONFIG_SIMD AND (VPX_ARCH_X86 OR VPX_ARCH_X86_64))
     #include <immintrin.h>
     int main() { __m512i a = _mm512_setzero_si512(); return 0; }
   " VPX_AVX512_FLAGS)
+else()
+  foreach(x86_feature MMX SSE2 SSE3 SSSE3 SSE4_1 AVX AVX2 AVX512)
+    set(HAVE_${x86_feature} OFF CACHE INTERNAL "" FORCE)
+  endforeach()
+  set(HAVE_X86_ASM OFF CACHE INTERNAL "" FORCE)
 endif()
 
 # ARM NEON detection
@@ -222,10 +230,13 @@ if(CONFIG_SIMD AND (VPX_ARCH_ARM OR VPX_ARCH_AARCH64))
     " VPX_NEON_FLAGS)
   endif()
 
-  # NEON ASM is only available on ARM32
-  if(VPX_ARCH_ARM AND HAVE_NEON)
-    set(HAVE_NEON_ASM ON)
-  endif()
+  # ARM32 NEON .asm sources use assembler syntax that this CMake build does not
+  # currently compile, so keep C NEON implementations enabled.
+  set(HAVE_NEON_ASM OFF)
+else()
+  foreach(arm_feature NEON NEON_DOTPROD NEON_I8MM NEON_ASM SVE SVE2)
+    set(HAVE_${arm_feature} OFF CACHE INTERNAL "" FORCE)
+  endforeach()
 endif()
 
 # ============================================================================
@@ -1826,6 +1837,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vpx.pc"
 # ============================================================================
 # Examples
 # ============================================================================
+if(CONFIG_EXAMPLES)
 set(EXAMPLE_SRCS
   args.c
   y4minput.c
@@ -1857,6 +1869,7 @@ endif()
 
 if(CONFIG_ENCODERS)
   add_vpx_example(simple_encoder examples/simple_encoder.c)
+endif()
 endif()
 
 # ============================================================================
