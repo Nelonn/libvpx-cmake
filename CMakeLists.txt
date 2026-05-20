@@ -502,6 +502,7 @@ set(VPX_SRCS
 )
 
 set(VPX_INCLUDES
+  vpx/vp8.h
   vpx/vpx_codec.h
   vpx/vpx_image.h
   vpx/vpx_frame_buffer.h
@@ -511,11 +512,11 @@ set(VPX_INCLUDES
 )
 
 if(CONFIG_DECODERS)
-  list(APPEND VPX_INCLUDES vpx/vpx_decoder.h)
+  list(APPEND VPX_INCLUDES vpx/vpx_decoder.h vpx/vp8dx.h)
 endif()
 
 if(CONFIG_ENCODERS)
-  list(APPEND VPX_INCLUDES vpx/vpx_encoder.h vpx/vpx_tpl.h vpx/vpx_ext_ratectrl.h)
+  list(APPEND VPX_INCLUDES vpx/vpx_encoder.h vpx/vp8cx.h vpx/vpx_tpl.h vpx/vpx_ext_ratectrl.h)
 endif()
 
 # ============================================================================
