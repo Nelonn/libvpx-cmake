@@ -384,6 +384,17 @@ configure_file("${CONFIG_H_IN}" "${CONFIG_H}")
 configure_file("${CONFIG_ASM_IN}" "${CONFIG_ASM}")
 configure_file("${VERSION_H_IN}" "${VERSION_H}")
 
+set(MSVC_ARM_NEON_COMPAT_DIR "${CMAKE_CURRENT_BINARY_DIR}/msvc_arm_neon_compat")
+if(MSVC AND (VPX_ARCH_ARM OR VPX_ARCH_AARCH64))
+  file(MAKE_DIRECTORY "${MSVC_ARM_NEON_COMPAT_DIR}")
+  file(WRITE "${MSVC_ARM_NEON_COMPAT_DIR}/arm_neon.h"
+    "#ifndef VPX_MSVC_ARM_NEON_COMPAT_H_\n"
+    "#define VPX_MSVC_ARM_NEON_COMPAT_H_\n"
+    "#include <arm64_neon.h>\n"
+    "#endif\n"
+  )
+endif()
+
 # Generate a config file for rtcd.pl in the format it expects (KEY=yes)
 set(RTCD_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/vpx_config.rtcd")
 set(RTCD_CONFIG_CONTENT "")
@@ -1724,6 +1735,10 @@ target_include_directories(vpx PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/vp9/common>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+if(MSVC AND (VPX_ARCH_ARM OR VPX_ARCH_AARCH64))
+  target_include_directories(vpx BEFORE PRIVATE "${MSVC_ARM_NEON_COMPAT_DIR}")
+endif()
 
 target_compile_definitions(vpx PRIVATE
   $<$<BOOL:${CONFIG_VP8}>:CONFIG_VP8=1>
