@@ -202,18 +202,18 @@ if(CONFIG_SIMD AND (VPX_ARCH_ARM OR VPX_ARCH_AARCH64))
       }
     " VPX_NEON_FLAGS)
 
-    # Check for SVE
     vpx_check_simd(SVE "
       #include <arm_sve.h>
+      #include <arm_neon_sve_bridge.h>
       int main() {
         svint32_t a;
         return 0;
       }
     " VPX_SVE_FLAGS)
 
-    # Check for SVE2
     vpx_check_simd(SVE2 "
       #include <arm_sve.h>
+      #include <arm_neon_sve_bridge.h>
       int main() {
         svint32_t a;
         return 0;
